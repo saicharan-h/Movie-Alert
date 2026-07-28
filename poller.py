@@ -54,8 +54,12 @@ DEFAULT_HEADERS = {
 def load_json(path, default=None):
     if not path.exists():
         return default
-    with open(path, "r", encoding="utf-8") as fh:
-        return json.load(fh)
+    try:
+        with open(path, "r", encoding="utf-8") as fh:
+            return json.load(fh)
+    except (OSError, json.JSONDecodeError) as exc:
+        print(f"Warning: failed to read JSON from {path}: {exc}; using default.", file=sys.stderr)
+        return default
 
 
 def save_json(path, data):
